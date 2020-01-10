@@ -59,6 +59,7 @@ func Sequential(jobName string, files []string, nreduce int,
 	go mr.run(jobName, files, nreduce, func(phase jobPhase) {
 		switch phase {
 		case mapPhase:
+			// for each file, run as a map job, output nReduce results
 			for i, f := range mr.files {
 				doMap(mr.jobName, i, f, mr.nReduce, mapF)
 			}
