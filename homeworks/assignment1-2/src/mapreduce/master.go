@@ -27,6 +27,16 @@ type Master struct {
 	stats    []int
 }
 
+// newMaster initializes a new Map/Reduce Master
+func newMaster(master string) (mr *Master) {
+	mr = new(Master)
+	mr.address = master
+	mr.shutdown = make(chan struct{})
+	mr.registerChannel = make(chan string)
+	mr.doneChannel = make(chan bool)
+	return
+}
+
 // Register is an RPC method that is called by workers after they have started
 // up to report that they are ready to receive tasks.
 func (mr *Master) Register(args *RegisterArgs, _ *struct{}) error {
@@ -40,22 +50,11 @@ func (mr *Master) Register(args *RegisterArgs, _ *struct{}) error {
 	return nil
 }
 
-// newMaster initializes a new Map/Reduce Master
-func newMaster(master string) (mr *Master) {
-	mr = new(Master)
-	mr.address = master
-	mr.shutdown = make(chan struct{})
-	mr.registerChannel = make(chan string)
-	mr.doneChannel = make(chan bool)
-	return
-}
-
 // Sequential runs map and reduce tasks sequentially, waiting for each task to
 // complete before scheduling the next.
 func Sequential(jobName string, files []string, nreduce int,
 	mapF func(string, string) []KeyValue,
-	reduceF func(string, []string) string,
-) (mr *Master) {
+	reduceF func(string, []string) string) (mr *Master) {
 	mr = newMaster("master")
 	go mr.run(jobName, files, nreduce, func(phase jobPhase) {
 		switch phase {
