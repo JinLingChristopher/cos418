@@ -73,7 +73,7 @@ func check(t *testing.T, files []string) {
 		text := outputScanner.Text()
 		n, err := fmt.Sscanf(lines[i], "%d", &v1)
 		if n == 1 && err == nil {
-			n, err = fmt.Sscanf(text, "%d", &v2)
+			_, err = fmt.Sscanf(text, "%d", &v2)
 		}
 		if err != nil || v1 != v2 {
 			t.Fatalf("line %d: %d != %d err %v\n", i, v1, v2, err)
@@ -144,7 +144,8 @@ func cleanup(mr *Master) {
 }
 
 func TestSequentialSingle(t *testing.T) {
-	mr := Sequential("test", makeInputs(1), 1, MapFunc, ReduceFunc)
+	input := makeInputs(1)
+	mr := Sequential("test", input, 1, MapFunc, ReduceFunc)
 	mr.Wait()
 	check(t, mr.files)
 	checkWorker(t, mr.stats)
@@ -152,7 +153,8 @@ func TestSequentialSingle(t *testing.T) {
 }
 
 func TestSequentialMany(t *testing.T) {
-	mr := Sequential("test", makeInputs(5), 3, MapFunc, ReduceFunc)
+	input := makeInputs(5)
+	mr := Sequential("test", input, 3, MapFunc, ReduceFunc)
 	mr.Wait()
 	check(t, mr.files)
 	checkWorker(t, mr.stats)

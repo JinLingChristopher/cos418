@@ -1,8 +1,9 @@
 package mapreduce
 
-import "os"
-
-import "encoding/json"
+import (
+	"encoding/json"
+	"os"
+)
 
 // doReduce does the job of a reduce worker: it reads the intermediate
 // key/value pairs (produced by the map phase) for this task, sorts the
@@ -23,8 +24,7 @@ func doReduce(
 		defer f.Close()
 
 		var kv KeyValue
-		for decoder := json.NewDecoder(f); decoder.More(); {
-			err := decoder.Decode(&kv)
+		for decoder := json.NewDecoder(f); decoder.More(); err = decoder.Decode(&kv) {
 			checkError(err)
 			records[kv.Key] = append(records[kv.Key], kv.Value)
 		}
@@ -36,6 +36,7 @@ func doReduce(
 
 	enc := json.NewEncoder(mf)
 	for k, v := range records {
-		enc.Encode(KeyValue{k, reduceF(k, v)})
+		err = enc.Encode(KeyValue{k, reduceF(k, v)})
+		checkError(err)
 	}
 }
