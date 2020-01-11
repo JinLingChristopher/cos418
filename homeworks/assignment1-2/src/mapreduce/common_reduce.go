@@ -14,8 +14,7 @@ func doReduce(
 	jobName string, // the name of the whole MapReduce job
 	reduceTaskNumber int, // which reduce task this is
 	nMap int, // the number of map tasks that were run ("M" in the paper)
-	reduceF func(key string, values []string) string,
-) {
+	reduceF func(key string, values []string) string) {
 	records := make(map[string][]string)
 	for i := 0; i < nMap; i++ {
 		filename := reduceName(jobName, i, reduceTaskNumber)
@@ -24,7 +23,8 @@ func doReduce(
 		defer f.Close()
 
 		var kv KeyValue
-		for decoder := json.NewDecoder(f); decoder.More(); err = decoder.Decode(&kv) {
+		for decoder := json.NewDecoder(f); decoder.More(); {
+			err = decoder.Decode(&kv)
 			checkError(err)
 			records[kv.Key] = append(records[kv.Key], kv.Value)
 		}

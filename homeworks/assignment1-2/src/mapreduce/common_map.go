@@ -15,11 +15,10 @@ func doMap(
 	mapTaskNumber int, // which map task this is
 	inFile string,
 	nReduce int, // the number of reduce task that will be run ("R" in the paper)
-	mapF func(file string, contents string) []KeyValue,
-) {
+	mapF func(file string, contents string) []KeyValue) {
+
 	bytes, err := ioutil.ReadFile(inFile)
 	checkError(err)
-
 	kvs := mapF(inFile, string(bytes))
 
 	reduceFiles := make([]*os.File, nReduce)

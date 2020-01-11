@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "Launch",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "program": "${fileDirname}",
+        "env": {},
+        "args": ["master", "sequential",
+            "pg-being_ernest.txt", "pg-dorian_gray.gtx", "pg-dracula.txt",
+            "pg-emma.txt", "pg-frankenstein.txt", "pg-great_expectations.txt",
+            "pg-grimm.txt", "pg-huckleberry_finn.txt", "pg-les_miserables.txt",
+            "pg-metamorphosis.txt", "pg-moby_dick.txt", "pg-sherlock_holmes.txt",
+            "pg-tale_of_two_cities.txt", "pg-tom_swyer.txt", "pg-ulysses.txt",
+            "pg-war_and_peace.txt"
+        ]
+    }]
+}
