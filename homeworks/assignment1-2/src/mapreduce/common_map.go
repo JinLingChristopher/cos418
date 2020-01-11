@@ -2,6 +2,7 @@ package mapreduce
 
 import (
 	"hash/fnv"
+	"log"
 )
 
 // doMap does the job of a map worker: it reads one of the input files
@@ -14,6 +15,7 @@ func doMap(
 	nReduce int, // the number of reduce task that will be run ("R" in the paper)
 	mapF func(file string, contents string) []KeyValue,
 ) {
+
 	// TODO:
 	// You will need to write this function.
 	// You can find the filename for this map task's input to reduce task number
@@ -45,6 +47,9 @@ func doMap(
 
 func ihash(s string) uint32 {
 	h := fnv.New32a()
-	h.Write([]byte(s))
+	_, err := h.Write([]byte(s))
+	if err != nil {
+		log.Fatal(err)
+	}
 	return h.Sum32()
 }
