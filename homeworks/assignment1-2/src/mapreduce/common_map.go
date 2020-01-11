@@ -3,8 +3,12 @@ package mapreduce
 import (
 	"encoding/json"
 	"hash/fnv"
+<<<<<<< HEAD
 	"io/ioutil"
 	"os"
+=======
+	"log"
+>>>>>>> c94de3443a34677b805d9dd82d9eaefeaa6c690e
 )
 
 // doMap does the job of a map worker: it reads one of the input files
