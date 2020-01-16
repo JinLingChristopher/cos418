@@ -17,16 +17,19 @@ import (
 func wordMapF(document string, value string) (res []mapreduce.KeyValue) {
 	// TODO: you have to write this function
 	words := strings.FieldsFunc(value, func(r rune) bool { return !unicode.IsLetter(r) })
-	// words := strings.Fields(value)
 	counter := make(map[string]int)
 	for _, item := range words {
 		counter[item] += 1
 	}
+
+	res = make([]mapreduce.KeyValue, len(counter))
+	idx := 0
 	for k, v := range counter {
-		res = append(res, mapreduce.KeyValue{
+		res[idx] = mapreduce.KeyValue{
 			Key:   k,
 			Value: strconv.Itoa(v),
-		})
+		}
+		idx += 1
 	}
 	return
 }
