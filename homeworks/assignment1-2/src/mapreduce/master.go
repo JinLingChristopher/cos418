@@ -42,7 +42,7 @@ func newMaster(master string) (mr *Master) {
 func (mr *Master) Register(args *RegisterArgs, _ *struct{}) error {
 	mr.Lock()
 	defer mr.Unlock()
-	debug("Register: worker %s\n", args.Worker)
+	_, _ = debug("Register: worker %s\n", args.Worker)
 	mr.workers = append(mr.workers, args.Worker)
 	go func() {
 		mr.registerChannel <- args.Worker
@@ -105,14 +105,14 @@ func (mr *Master) run(jobName string, files []string, nreduce int,
 	mr.files = files
 	mr.nReduce = nreduce
 
-	debug("%s: Starting Map/Reduce task %s\n", mr.address, mr.jobName)
+	_, _ = debug("%s: Starting Map/Reduce task %s\n", mr.address, mr.jobName)
 
 	schedule(mapPhase)
 	schedule(reducePhase)
 	finish()
 	mr.merge()
 
-	debug("%s: Map/Reduce task completed\n", mr.address)
+	_, _ = debug("%s: Map/Reduce task completed\n", mr.address)
 
 	mr.doneChannel <- true
 }
@@ -131,7 +131,7 @@ func (mr *Master) killWorkers() []int {
 	defer mr.Unlock()
 	ntasks := make([]int, 0, len(mr.workers))
 	for _, w := range mr.workers {
-		debug("Master: shutdown worker %s\n", w)
+		_, _ = debug("Master: shutdown worker %s\n", w)
 		var reply ShutdownReply
 		ok := call(w, "Worker.Shutdown", new(struct{}), &reply)
 		if ok {

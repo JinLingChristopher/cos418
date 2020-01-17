@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"mr/mapreduce"
 	"os"
+	"sort"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -18,9 +20,13 @@ func invertedIndexMapF(document string, value string) (res []mapreduce.KeyValue)
 		return !unicode.IsLetter(r)
 	})
 
+	unique := make(map[string]bool)
 	for _, item := range words {
+		unique[item] = true
+	}
+	for k := range unique {
 		res = append(res, mapreduce.KeyValue{
-			Key:   item,
+			Key:   k,
 			Value: document,
 		})
 	}
@@ -32,7 +38,8 @@ func invertedIndexMapF(document string, value string) (res []mapreduce.KeyValue)
 // should be a single output value for that key.
 func invertedIndexReduceF(key string, values []string) string {
 	// TODO: you should complete this to do the inverted index challenge
-
+	sort.Strings(values)
+	return strconv.Itoa(len(values)) + " " + strings.Join(values, ",")
 }
 
 // Can be run in 3 ways:

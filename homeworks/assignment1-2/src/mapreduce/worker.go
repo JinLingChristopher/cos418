@@ -24,7 +24,7 @@ type Worker struct {
 // DoTask is called by the master when a new task is being scheduled on this
 // worker.
 func (wk *Worker) DoTask(arg *DoTaskArgs, _ *struct{}) error {
-     	 debug("%s: given %v task #%d on file %s (nios: %d)\n",
+	debug("%s: given %v task #%d on file %s (nios: %d)\n",
 		wk.name, arg.Phase, arg.TaskNumber, arg.File, arg.NumOtherPhase)
 
 	switch arg.Phase {
@@ -55,7 +55,7 @@ func (wk *Worker) register(master string) {
 	args := new(RegisterArgs)
 	args.Worker = wk.name
 	ok := call(master, "Master.Register", args, new(struct{}))
-	if ok == false {
+	if ok {
 		fmt.Printf("Register: RPC %s register error\n", master)
 	}
 }
@@ -74,7 +74,7 @@ func RunWorker(MasterAddress string, me string,
 	wk.Reduce = ReduceFunc
 	wk.nRPC = nRPC
 	rpcs := rpc.NewServer()
-	rpcs.Register(wk)
+	_ = rpcs.Register(wk)
 	os.Remove(me) // only needed for "unix"
 	l, e := net.Listen("unix", me)
 	if e != nil {
