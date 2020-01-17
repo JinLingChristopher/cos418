@@ -34,14 +34,13 @@ func (mr *Master) schedule(phase jobPhase) {
 		wg.Add(1)
 		go func(args DoTaskArgs, ch chan string) {
 			wk := <-mr.registerChannel
-			for {
-				if call(wk, "Worker.DoTask", args, nil) {
-					go func() {
-						mr.registerChannel <- wk
-					}()
-					break
-				}
+			for !call(wk, "Worker.DoTask", args, nil) {
+				wk = <-mr.registerChannel
 			}
+
+			go func() {
+				mr.registerChannel <- wk
+			}()
 			wg.Done()
 		}(args, mr.registerChannel)
 	}
