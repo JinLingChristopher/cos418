@@ -15,6 +15,7 @@ func doReduce(
 	reduceTaskNumber int, // which reduce task this is
 	nMap int, // the number of map tasks that were run ("M" in the paper)
 	reduceF func(key string, values []string) string) {
+
 	records := make(map[string][]string)
 	for i := 0; i < nMap; i++ {
 		filename := reduceName(jobName, i, reduceTaskNumber)

@@ -21,28 +21,28 @@ func (mr *Master) schedule(phase jobPhase) {
 	// them have been completed successfully should the function return.
 	// Remember that workers may fail, and that any given worker may finish
 	// multiple tasks.
-	//
 	var wg sync.WaitGroup
 	for i := 0; i < ntasks; i++ {
-		args := DoTaskArgs{
-			JobName:       mr.jobName,
-			File:          mr.files[i],
-			Phase:         phase,
-			TaskNumber:    i,
-			NumOtherPhase: nios,
-		}
 		wg.Add(1)
-		go func(args DoTaskArgs, ch chan string) {
-			wk := <-mr.registerChannel
-			for !call(wk, "Worker.DoTask", args, nil) {
-				wk = <-mr.registerChannel
+		go func(idx int) {
+			defer wg.Done()
+			args := &DoTaskArgs{
+				JobName:       mr.jobName,
+				Phase:         phase,
+				File:          mr.files[idx],
+				TaskNumber:    idx,
+				NumOtherPhase: nios,
 			}
-
-			go func() {
-				mr.registerChannel <- wk
-			}()
-			wg.Done()
-		}(args, mr.registerChannel)
+			for {
+				wk := <-mr.registerChannel
+				if call(wk, "Worker.DoTask", args, nil) {
+					go func() {
+						mr.registerChannel <- wk
+					}()
+					break
+				}
+			}
+		}(i)
 	}
 	wg.Wait()
 	debug("Schedule: %v phase done\n", phase)
