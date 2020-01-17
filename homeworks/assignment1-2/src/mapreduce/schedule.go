@@ -1,5 +1,7 @@
 package mapreduce
 
+import "sync"
+
 // schedule starts and waits for all tasks in the given phase (Map or Reduce).
 func (mr *Master) schedule(phase jobPhase) {
 	var ntasks int
@@ -20,7 +22,29 @@ func (mr *Master) schedule(phase jobPhase) {
 	// Remember that workers may fail, and that any given worker may finish
 	// multiple tasks.
 	//
-	// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-	//
+	var wg sync.WaitGroup
+	for i := 0; i < ntasks; i++ {
+		args := DoTaskArgs{
+			JobName:       mr.jobName,
+			File:          mr.files[i],
+			Phase:         phase,
+			TaskNumber:    i,
+			NumOtherPhase: nios,
+		}
+		wg.Add(1)
+		go func(args DoTaskArgs, ch chan string) {
+			wk := <-mr.registerChannel
+			for {
+				if call(wk, "Worker.DoTask", args, nil) {
+					go func() {
+						mr.registerChannel <- wk
+					}()
+					break
+				}
+			}
+			wg.Done()
+		}(args, mr.registerChannel)
+	}
+	wg.Wait()
 	debug("Schedule: %v phase done\n", phase)
 }
