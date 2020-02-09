@@ -176,10 +176,8 @@ func TestBasic(t *testing.T) {
 func TestOneFailure(t *testing.T) {
 	mr := setup()
 	// Start 2 workers that fail after 10 tasks
-	go RunWorker(mr.address, port("worker"+strconv.Itoa(0)),
-		MapFunc, ReduceFunc, 10)
-	go RunWorker(mr.address, port("worker"+strconv.Itoa(1)),
-		MapFunc, ReduceFunc, -1)
+	go RunWorker(mr.address, port("worker"+strconv.Itoa(0)), MapFunc, ReduceFunc, 10)
+	go RunWorker(mr.address, port("worker"+strconv.Itoa(1)), MapFunc, ReduceFunc, -1)
 	mr.Wait()
 	check(t, mr.files)
 	checkWorker(t, mr.stats)
