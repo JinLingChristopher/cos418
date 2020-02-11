@@ -73,6 +73,7 @@ func RunWorker(MasterAddress string, me string,
 	wk.Map = MapFunc
 	wk.Reduce = ReduceFunc
 	wk.nRPC = nRPC
+
 	rpcs := rpc.NewServer()
 	_ = rpcs.Register(wk)
 	os.Remove(me) // only needed for "unix"
